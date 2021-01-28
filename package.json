@@ -1,14 +1,16 @@
 {
   "name": "streamboard-plugin-builder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "StreamBoard SDK is an SDK to create plugin for the Stream Board",
   "scripts": {
     "build": "tsc",
     "serve": "ts-node ./src/bin/index.ts",
+    "test": "ts-node ./test/test.ts",
     "lint": "eslint . --ext .ts"
   },
+  "preferGlobal": true,
   "bin": {
-    "streamboard-builder": "./dist/bin/index.js"
+    "streamboard-builder": "./src/bin/index.js"
   },
   "devDependencies": {
     "@types/tar-fs": "^2.0.0",

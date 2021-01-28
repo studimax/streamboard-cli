@@ -7,8 +7,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "declaration": true,
+    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
-    "outDir": "dist",
     "moduleResolution": "node",
     "types": [
       "node"

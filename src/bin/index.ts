@@ -2,11 +2,10 @@
 
 import PluginBuilder from "../lib/PluginBuilder";
 
-try {
-    const builder = new PluginBuilder(process.cwd(), process.cwd());
-    builder.compile();
+const builder = new PluginBuilder(process.cwd(), process.cwd());
+builder.run().then(() => {
     console.log("Build success !")
-} catch (e) {
+}).catch(reason => {
     console.error("ERROR");
-    console.error(e?.message);
-}
+    console.error(reason?.message);
+})

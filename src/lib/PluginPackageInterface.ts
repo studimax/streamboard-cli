@@ -27,19 +27,27 @@ export const PluginPackageSchema: JSONSchemaType<PluginPackageInterface> = {
         },
         version: {
             type: "string",
+            default: "1.0.0",
             description: "Version must be parseable by node-semver, which is bundled with npm as a dependency.",
         },
         description: {
             description: "This helps people discover your package, as it's listed in 'npm search'.",
             type: "string"
         },
-        main: {type: "string"},
+        main: {
+            type: "string",
+            default: "index.js",
+        },
         icon: {type: "string"},
-        identifier: {type: "string"},
+        identifier: {
+            type: "string",
+            description: "The identifier of the plugin.",
+            pattern: "^[a-z]{2,}\\.[a-z]{2,}\\.[a-z-]{2,}$"
+        },
         actions: {
             type: "object",
             patternProperties: {
-                "^.*$": {
+                "^[a-z-]{2,}$": {
                     type: "object",
                     properties: {
                         name: {
@@ -50,8 +58,9 @@ export const PluginPackageSchema: JSONSchemaType<PluginPackageInterface> = {
                         }
                     },
                     required: ["name", "icon"]
-                }
+                },
             },
+            additionalProperties: false,
             required: []
         }
     },

@@ -5,10 +5,10 @@ import * as fs from "fs";
 import Ajv from "ajv";
 import tar from "tar-fs";
 import {PluginPackageInterface, PluginPackageSchema} from "./PluginPackageInterface";
+import packageInfo from "../../package.json"
 
 export default class PluginBuilder {
     private readonly config: CompilerConfig;
-    private readonly pkg: PluginPackageInterface;
     private readonly packageFolder: string;
 
     constructor(private readonly srcPath: string, private readonly distPath: string) {
@@ -16,33 +16,45 @@ export default class PluginBuilder {
         this.config.context = this.srcPath;
         this.packageFolder = "package"
         this.config.output.path = path.resolve(this.distPath, this.packageFolder, 'unpacked');
-        this.pkg = this.verifyPlugin();
     }
 
-    public compile() {
-        const wb = webpack(this.config);
-        wb.run((err?: Error, result?) => {
-            if (err) throw new Error("error during packaging");
-            this.pack();
-        });
+    public async run() {
+        console.log(`Run ${packageInfo.name}@${packageInfo.version}`);
+        const pkg = await this.verifyPlugin();
+        await this.compile();
+        await this.pack(pkg);
     }
 
-    private pack() {
-        const pkg = {
-            ...this.pkg,
+    private compile() {
+        console.log("start compiling...");
+        return new Promise((resolve, reject) => {
+            const wb = webpack(this.config);
+            wb.run((err?: Error, result?) => {
+                console.log("finish compiling...");
+                if (err) return reject(err);
+                return resolve(result);
+            });
+        })
+    }
+
+    private async pack(pkg: PluginPackageInterface) {
+        pkg = {
+            ...pkg,
             main: this.config.output.filename
         }
-        fs.writeFileSync(path.join(this.config.output.path, "package.json"), JSON.stringify(pkg, null, "\t"));
+        console.log("start creating plugin package.json...");
+        await fs.promises.writeFile(path.join(this.config.output.path, "package.json"), JSON.stringify(pkg, null, "\t"));
+        console.log("start packaging...");
         tar
             .pack(this.config.output.path)
             .pipe(fs.createWriteStream(path.resolve(this.config.output.path, `../${pkg.identifier}-${pkg.version}.sbplugin`)));
     }
 
-    private verifyPlugin(): PluginPackageInterface {
+    private async verifyPlugin(): Promise<PluginPackageInterface> {
         const pkgPath = path.join(this.srcPath, "package.json");
-        const pkgData: PluginPackageInterface = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+        const pkgData: PluginPackageInterface = JSON.parse(await fs.promises.readFile(pkgPath, "utf8"));
         const ajv = new Ajv({removeAdditional: true});
-        const validate = ajv.compile<PluginPackageInterface>(PluginPackageSchema)
+        const validate = await ajv.compile<PluginPackageInterface>(PluginPackageSchema)
         const valid = validate(pkgData);
         if (!valid) throw new Error(ajv.errorsText(validate.errors));
         return pkgData;

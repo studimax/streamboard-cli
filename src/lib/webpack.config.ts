@@ -3,6 +3,8 @@ import {Configuration} from "webpack";
 import CopyPlugin from "copy-webpack-plugin";
 
 export interface CompilerConfig extends Configuration {
+    context: string;
+    entry: string;
     output: {
         path: string;
         filename: string;
@@ -33,7 +35,7 @@ export default {
             patterns: [
                 {
                     from: "assets/",
-                    to:"assets/",
+                    to: "assets/",
                     globOptions: {
                         gitignore: true,
                     }
