@@ -1,0 +1,45 @@
+{
+  "name": "streamboard-plugin-builder",
+  "version": "1.0.0",
+  "description": "StreamBoard SDK is an SDK to create plugin for the Stream Board",
+  "scripts": {
+    "build": "tsc",
+    "serve": "ts-node ./src/bin/index.ts",
+    "lint": "eslint . --ext .ts"
+  },
+  "bin": {
+    "streamboard-builder": "./dist/bin/index.js"
+  },
+  "devDependencies": {
+    "@types/tar-fs": "^2.0.0",
+    "@types/copy-webpack-plugin": "^6.4.0",
+    "@types/node": "^14.14.22",
+    "@types/tar": "^4.0.4",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
+    "eslint": "^7.18.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/studimax/streamboard-plugin-builder.git"
+  },
+  "keywords": [
+    "sdk",
+    "streamboard",
+    "studimax"
+  ],
+  "author": "StudiMax Ent.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/studimax/streamboard-plugin-builder/issues"
+  },
+  "homepage": "https://github.com/studimax/streamboard-plugin-builder#readme",
+  "dependencies": {
+    "ajv": "^7.0.3",
+    "copy-webpack-plugin": "^7.0.0",
+    "webpack": "^5.18.0",
+    "tar-fs": "^2.1.1"
+  }
+}
