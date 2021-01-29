@@ -1,3 +1,5 @@
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/studimax/streamboard-plugin-builder/CodeQL)
+[![npm](https://img.shields.io/npm/v/streamboard-plugin-builder)](https://www.npmjs.com/package/streamboard-plugin-builder)
 # Stream Board Plugin Builder
 
 This project is the **official** plugin builder for the Stream Board project.
