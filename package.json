@@ -1,7 +1,7 @@
 {
   "name": "streamboard-plugin-builder",
   "version": "1.0.1",
-  "description": "StreamBoard SDK is an SDK to create plugin for the Stream Board",
+  "description": "StreamBoard Plugin Builder is an plugin packager to create a packed plugin for the Stream Board",
   "scripts": {
     "build": "tsc",
     "serve": "ts-node ./src/bin/index.ts",
