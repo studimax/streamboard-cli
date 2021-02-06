@@ -1,17 +1,17 @@
-![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/studimax/streamboard-plugin-builder/CodeQL)
-[![npm](https://img.shields.io/npm/v/streamboard-plugin-builder)](https://www.npmjs.com/package/streamboard-plugin-builder)
-# Stream Board Plugin Builder
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/studimax/streamboard-cli/CodeQL)
+[![npm](https://img.shields.io/npm/v/streamboard-cli)](https://www.npmjs.com/package/streamboard-cli)
+# Stream Board CLI
 
 This project is the **official** plugin builder for the Stream Board project.
 
 # Installation
 
-    $ npm install streamboard-plugin-builder -g
+    $ npm install streamboard-cli -g
+Create a new plugin
 
-And then you can build your Plugin
-You need to be in the root path of your plugin project.
-    
-    $ streamboard-builder
+    $ streamboard-cli create <name> 
+    $ cd <name>
+    $ streamboard-cli build
 
 You need a valid package.json with this configuration :
 
