@@ -7,6 +7,6 @@ export default async function build(options: any) {
         console.log(green("Build success !"));
     }).catch(reason => {
         console.error(red("ERROR"));
-        console.error(red(reason?.message));
+        console.error(red(reason.message));
     })
 }

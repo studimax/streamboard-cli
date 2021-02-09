@@ -7,7 +7,16 @@ import fs from "fs-extra";
 export default async function create(projectName: string, options: any) {
     const cwd = process.cwd()
     const inCurrent = projectName === '.'
-    const name = inCurrent ? path.relative('../', cwd) : projectName
+    if (!projectName.match("^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$")) {
+        const {text} = await inquirer.prompt([{
+            name: "text",
+            type: "input",
+            message: `Invalid name use an other name`,
+            validate: ((input: string) => !!input.match("^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$"))
+        }]);
+        projectName = text;
+    }
+    const name = inCurrent ? path.relative('../', cwd) : projectName;
     const targetDir = path.resolve(cwd, projectName || '.');
     if (fs.existsSync(targetDir)) {
         if (inCurrent) {
@@ -19,7 +28,7 @@ export default async function create(projectName: string, options: any) {
                 }
             ]);
             if (!ok) return;
-        }else{
+        } else {
             const {action} = await inquirer.prompt([
                 {
                     name: 'action',
