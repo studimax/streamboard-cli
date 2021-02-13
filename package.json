@@ -1,6 +1,6 @@
 {
   "name": "streamboard-cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "StreamBoard CLI is a command-line interface to create and pack plugins for the Stream Board",
   "scripts": {
     "build": "tsc",
