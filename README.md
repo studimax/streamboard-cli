@@ -1,4 +1,5 @@
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/studimax/streamboard-cli/CodeQL)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ba0fe6b62c2748babe7b6347f6f02c53)](https://app.codacy.com/gh/studimax/streamboard-cli?utm_source=github.com&utm_medium=referral&utm_content=studimax/streamboard-cli&utm_campaign=Badge_Grade_Settings)
 [![npm](https://img.shields.io/npm/v/streamboard-cli)](https://www.npmjs.com/package/streamboard-cli)
 # Stream Board CLI
 
