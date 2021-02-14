@@ -1,6 +1,7 @@
 {
   "name": "streamboard-cli",
-  "version": "0.0.3",
+  "version": "0.0.4",
+  "author": "StudiMax Ent.",
   "description": "StreamBoard CLI is a command-line interface to create and pack plugins for the Stream Board",
   "scripts": {
     "build": "tsc",
@@ -11,6 +12,19 @@
   "preferGlobal": true,
   "bin": {
     "streamboard-cli": "./src/bin/index.js"
+  },
+  "dependencies": {
+    "ajv": "^7.0.3",
+    "colors": "^1.4.0",
+    "commander": "^7.0.0",
+    "copy-webpack-plugin": "^7.0.0",
+    "download": "^8.0.0",
+    "fs-extra": "^9.1.0",
+    "inquirer": "^7.3.3",
+    "rimraf": "^3.0.2",
+    "tar-fs": "^2.1.1",
+    "ts-loader": "^8.0.17",
+    "webpack": "^5.18.0"
   },
   "devDependencies": {
     "@types/copy-webpack-plugin": "^6.4.0",
@@ -36,27 +50,13 @@
     "url": "git+https://github.com/studimax/streamboard-cli.git"
   },
   "keywords": [
-    "sdk",
+    "cli",
     "streamboard",
     "studimax"
   ],
-  "author": "StudiMax Ent.",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/studimax/streamboard-cli/issues"
   },
-  "homepage": "https://github.com/studimax/streamboard-cli#readme",
-  "dependencies": {
-    "ajv": "^7.0.3",
-    "colors": "^1.4.0",
-    "commander": "^7.0.0",
-    "copy-webpack-plugin": "^7.0.0",
-    "download": "^8.0.0",
-    "fs-extra": "^9.1.0",
-    "inquirer": "^7.3.3",
-    "rimraf": "^3.0.2",
-    "tar-fs": "^2.1.1",
-    "ts-loader": "^8.0.17",
-    "webpack": "^5.18.0"
-  }
+  "homepage": "https://github.com/studimax/streamboard-cli#readme"
 }
