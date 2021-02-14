@@ -1,58 +1,62 @@
-import {webpack} from "webpack";
 import config, {CompilerConfig} from "./webpack.config";
 import path from "path";
-import * as fs from "fs";
+import fs from "fs-extra";
 import Ajv from "ajv";
 import tar from "tar-fs";
 import {PluginPackageInterface, PluginPackageSchema} from "./PluginPackageInterface";
 import packageInfo from "../../package.json";
+import {green} from "colors";
+import {cyan, yellow} from "colors/safe";
+import webpack from "webpack";
 
 export default class PluginBuilder {
+    private static readonly packageFolder = "package";
     private readonly config: CompilerConfig;
-    private readonly packageFolder: string;
 
     constructor(private readonly srcPath: string, private readonly distPath: string) {
-        this.config = config;
-        this.config.context = this.srcPath;
-        this.packageFolder = "package";
-        this.config.output.path = path.resolve(this.distPath, this.packageFolder, "unpacked");
+        this.config = config(this.srcPath, path.resolve(this.distPath, PluginBuilder.packageFolder, "unpacked"));
     }
 
     public async run(): Promise<void> {
-        console.log(`Run ${packageInfo.name}@${packageInfo.version}`);
+        console.log(cyan(`Run ${packageInfo.name}@${packageInfo.version}`));
         const pkg = await this.verifyPlugin();
+        console.log(cyan(`Let's make ${yellow(pkg.name)} a perfect packed plugin !`));
         await this.compile();
         await this.pack(pkg);
     }
 
-    private compile() {
-        console.log("start compiling...");
+    private compile(): Promise<unknown> {
         return new Promise((resolve, reject) => {
+            console.log(green("start compiling..."));
             const wb = webpack(this.config);
-            wb.run((err?: Error, result?) => {
-                console.log("finish compiling...");
+            wb.run((err?: Error, stats?) => {
+                console.log(green("finish compiling..."));
                 if (err) return reject(err);
-                return resolve(result);
+                if (stats?.hasErrors()) return reject(stats?.compilation.errors);
+                if (stats?.hasWarnings()) {
+                    console.log(yellow(stats?.compilation.warnings.toString()));
+                }
+                return resolve(stats);
             });
         });
     }
 
-    private async pack(pkg: PluginPackageInterface) {
+    private async pack(pkg: PluginPackageInterface): Promise<void> {
         pkg = {
             ...pkg,
             main: this.config.output.filename
         };
-        console.log("start creating plugin package.json...");
-        await fs.promises.writeFile(path.join(this.config.output.path, "package.json"), JSON.stringify(pkg, null, "\t"));
-        console.log("start packaging...");
+        console.log(green("start creating plugin package.json..."));
+        await fs.writeJSON(path.resolve(this.config.output.path, "package.json"), pkg, {spaces: "\t"});
+        console.log(green("start packaging..."));
         tar
             .pack(this.config.output.path)
-            .pipe(fs.createWriteStream(path.resolve(this.config.output.path, `../${pkg.identifier}-${pkg.version}.sbplugin`)));
+            .pipe(fs.createWriteStream(path.resolve(this.config.output.path, `../${pkg.identifier}@${pkg.version}.sbplugin`)));
     }
 
     private async verifyPlugin(): Promise<PluginPackageInterface> {
-        const pkgPath = path.join(this.srcPath, "package.json");
-        const pkgData: PluginPackageInterface = JSON.parse(await fs.promises.readFile(pkgPath, "utf8"));
+        const pkgPath = path.resolve(this.srcPath, "package.json");
+        const pkgData: PluginPackageInterface = await fs.readJSON(pkgPath);
         const ajv = new Ajv({removeAdditional: true});
         const validate = await ajv.compile<PluginPackageInterface>(PluginPackageSchema);
         const valid = validate(pkgData);

@@ -1,9 +1,8 @@
-import path from "path";
-import { Configuration } from "webpack";
+import {Configuration} from "webpack";
 import CopyPlugin from "copy-webpack-plugin";
+import path from "path";
 
 export interface CompilerConfig extends Configuration {
-    context: string;
     entry: string;
     output: {
         path: string;
@@ -11,37 +10,40 @@ export interface CompilerConfig extends Configuration {
     }
 }
 
-export default {
-	context: process.cwd(),
-	entry: "./src/index.ts",
-	module: {
-		rules: [
-			{
-				test: /\.tsx?$/,
-				use: "ts-loader",
-				exclude: /node_modules/
-			}
-		]
-	},
-	resolve: {
-		extensions: [".tsx", ".ts", ".js"]
-	},
-	output: {
-		path: path.resolve(__dirname, "build"),
-		filename: "index.js"
-	},
-	plugins: [
-		new CopyPlugin({
-			patterns: [
-				{
-					from: "assets/",
-					to: "assets/",
-					globOptions: {
-						gitignore: true
-					}
-				}
-			]
-		})
-	],
-	target: "node"
-} as CompilerConfig;
+export default (src: string, out: string): CompilerConfig => ({
+    context: path.resolve(__dirname),
+    mode:"production",
+    stats: true,
+    entry: path.resolve(src, "./src/index.ts"),
+    output: {
+        path: out,
+        filename: "index.js"
+    },
+    module: {
+        rules: [
+            {
+                test: /\.tsx?$/,
+                use: "ts-loader",
+                exclude: /node_modules/
+            }
+        ]
+    },
+    resolve: {
+        extensions: [".tsx", ".ts", ".js"]
+    },
+    plugins: [
+        new CopyPlugin({
+            patterns: [
+                {
+                    context: path.resolve(src),
+                    from: "assets/",
+                    to: "assets/",
+                    globOptions: {
+                        gitignore: true
+                    }
+                }
+            ]
+        })
+    ],
+    target: "node"
+});
