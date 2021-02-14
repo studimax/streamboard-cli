@@ -14,21 +14,27 @@ export default class PluginBuilder {
     private readonly config: CompilerConfig;
 
     constructor(private readonly srcPath: string, private readonly distPath: string) {
-        this.config = config(this.srcPath, path.resolve(this.distPath, PluginBuilder.packageFolder, "unpacked"));
+        this.config = config(
+            this.srcPath,
+            path.resolve(this.distPath, PluginBuilder.packageFolder, "unpacked")
+        );
     }
 
     public async run(): Promise<void> {
         console.log(cyan(`Run ${packageInfo.name}@${packageInfo.version}`));
         const pkg = await this.verifyPlugin();
         console.log(cyan(`Let's make ${yellow(pkg.name)} a perfect packed plugin !`));
-        await this.compile();
+        await this.compile(pkg);
         await this.pack(pkg);
     }
 
-    private compile(): Promise<unknown> {
+    private compile(pkg: PluginPackageInterface): Promise<unknown> {
         return new Promise((resolve, reject) => {
             console.log(green("start compiling..."));
-            const wb = webpack(this.config);
+            const wb = webpack({
+                ...this.config,
+                entry: path.resolve(this.srcPath, pkg.main),
+            });
             wb.run((err?: Error, stats?) => {
                 console.log(green("finish compiling..."));
                 if (err) return reject(err);
