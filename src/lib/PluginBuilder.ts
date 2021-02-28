@@ -11,28 +11,27 @@ import webpack from "webpack";
 
 export default class PluginBuilder {
     private static readonly packageFolder = "package";
-    private readonly config: CompilerConfig;
 
     constructor(private readonly srcPath: string, private readonly distPath: string) {
-        this.config = config(
-            this.srcPath,
-            path.resolve(this.distPath, PluginBuilder.packageFolder, "unpacked")
-        );
     }
 
     public async run(): Promise<void> {
         console.log(cyan(`Run ${packageInfo.name}@${packageInfo.version}`));
         const pkg = await this.verifyPlugin();
+        const c = config(
+            this.srcPath,
+            path.resolve(this.distPath, PluginBuilder.packageFolder, pkg.identifier)
+        );
         console.log(cyan(`Let's make ${yellow(pkg.name)} a perfect packed plugin !`));
-        await this.compile(pkg);
-        await this.pack(pkg);
+        await this.compile(pkg, c);
+        await this.pack(pkg, c);
     }
 
-    private compile(pkg: PluginPackageInterface): Promise<unknown> {
+    private compile(pkg: PluginPackageInterface, config: CompilerConfig): Promise<unknown> {
         return new Promise((resolve, reject) => {
             console.log(green("start compiling..."));
             const wb = webpack({
-                ...this.config,
+                ...config,
                 entry: path.resolve(this.srcPath, pkg.main),
             });
             wb.run((err?: Error, stats?) => {
@@ -47,17 +46,17 @@ export default class PluginBuilder {
         });
     }
 
-    private async pack(pkg: PluginPackageInterface): Promise<void> {
+    private async pack(pkg: PluginPackageInterface, config: CompilerConfig): Promise<void> {
         pkg = {
             ...pkg,
-            main: this.config.output.filename
+            main: config.output.filename
         };
         console.log(green("start creating plugin package.json..."));
-        await fs.writeJSON(path.resolve(this.config.output.path, "package.json"), pkg, {spaces: "\t"});
+        await fs.writeJSON(path.resolve(config.output.path, "package.json"), pkg, {spaces: "\t"});
         console.log(green("start packaging..."));
         tar
-            .pack(this.config.output.path)
-            .pipe(fs.createWriteStream(path.resolve(this.config.output.path, `../${pkg.identifier}@${pkg.version}.sbplugin`)));
+            .pack(config.output.path)
+            .pipe(fs.createWriteStream(path.resolve(config.output.path, `../${pkg.identifier}@${pkg.version}.sbplugin`)));
     }
 
     private async verifyPlugin(): Promise<PluginPackageInterface> {

@@ -3,7 +3,7 @@ import { sync as rm } from "rimraf";
 
 import { spawn } from "child_process";
 
-function gitclone (repo: any, targetPath: string, opts: any) {
+function gitClone (repo: any, targetPath: string, opts: any) {
 	opts = opts || {};
 
 	const git = opts.git || "git";
@@ -20,7 +20,7 @@ function gitclone (repo: any, targetPath: string, opts: any) {
 
 	return new Promise((resolve, reject) => {
 		const process = spawn(git, args);
-		process.on("close", (status) => {
+		process.on("close", (status: unknown) => {
 			if (status == 0) {
 				if (opts.checkout) {
 					_checkout().then(resolve).catch(reject);
@@ -37,7 +37,7 @@ function gitclone (repo: any, targetPath: string, opts: any) {
 		return new Promise((resolve, reject) => {
 			const args = ["checkout", opts.checkout];
 			const process = spawn(git, args, { cwd: targetPath });
-			process.on("close", (status) => {
+			process.on("close", (status: unknown) => {
 				if (status == 0) {
 					resolve(status);
 				} else {
@@ -62,7 +62,7 @@ export default function download (repository: string, dest: string, opts?: any):
 			shallow: repo.checkout === "master",
 			...opts
 		};
-		return gitclone(url, dest, cloneOptions).then(() => {
+		return gitClone(url, dest, cloneOptions).then(() => {
 			rm(dest + "/.git");
 			return dest;
 		});

@@ -12,7 +12,7 @@ export interface CompilerConfig extends Configuration {
 
 export default (src: string, out: string): CompilerConfig => ({
     context: path.resolve(__dirname),
-    mode:"production",
+    mode: "production",
     stats: true,
     entry: path.resolve(src, "./src/index.ts"),
     output: {
@@ -30,6 +30,9 @@ export default (src: string, out: string): CompilerConfig => ({
     },
     resolve: {
         extensions: [".tsx", ".ts", ".js"]
+    },
+    optimization: {
+        minimize: true
     },
     plugins: [
         new CopyPlugin({
