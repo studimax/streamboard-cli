@@ -20,4 +20,4 @@ jspm_packages/
 src/**/*.js
 src/**/*.map
 src/**/*.d.ts
-package
+/package

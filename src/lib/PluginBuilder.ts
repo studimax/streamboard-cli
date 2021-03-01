@@ -1,45 +1,63 @@
-import config, {CompilerConfig} from "./webpack.config";
 import path from "path";
 import fs from "fs-extra";
 import Ajv from "ajv";
 import tar from "tar-fs";
 import {PluginPackageInterface, PluginPackageSchema} from "./PluginPackageInterface";
 import packageInfo from "../../package.json";
-import {green} from "colors";
-import {cyan, yellow} from "colors/safe";
+import {cyan, green, yellow} from "colors/safe";
 import webpack from "webpack";
+import Config, {CompilerConfig} from "./webpack.config";
+import cliProgress from "cli-progress";
 
 export default class PluginBuilder {
     private static readonly packageFolder = "package";
+    public verbose = true;
 
     constructor(private readonly srcPath: string, private readonly distPath: string) {
     }
 
     public async run(): Promise<void> {
-        console.log(cyan(`Run ${packageInfo.name}@${packageInfo.version}`));
+        this.log(cyan(`Run ${packageInfo.name}@${packageInfo.version}`));
         const pkg = await this.verifyPlugin();
-        const c = config(
+        const c = new Config(
             this.srcPath,
             path.resolve(this.distPath, PluginBuilder.packageFolder, pkg.identifier)
         );
-        console.log(cyan(`Let's make ${yellow(pkg.name)} a perfect packed plugin !`));
+        this.log(cyan(`Let's make ${yellow(pkg.name)} a perfect packed plugin !`));
         await this.compile(pkg, c);
         await this.pack(pkg, c);
     }
 
-    private compile(pkg: PluginPackageInterface, config: CompilerConfig): Promise<unknown> {
+    private log(...data: any[]) {
+        if (this.verbose) console.log(...data);
+    }
+
+    private compile(pkg: PluginPackageInterface, config: Config): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            console.log(green("start compiling..."));
-            const wb = webpack({
-                ...config,
-                entry: path.resolve(this.srcPath, pkg.main),
-            });
+            this.log(green("start compiling..."));
+            const bar = new cliProgress.SingleBar({
+                format: 'Compile |' + cyan('{bar}') + '| {percentage}% || {state}',
+                clearOnComplete: true
+            }, cliProgress.Presets.shades_classic);
+            if (this.verbose) {
+                bar.start(100, 0, {
+                    state: "starting"
+                });
+            }
+            config.entry = path.resolve(this.srcPath, pkg.main);
+            config.onprogress = (percentage, msg) => {
+                bar.update(Math.floor(percentage * 100), {
+                    state: msg
+                });
+            }
+            const wb = webpack(config.toWebpackConfig());
             wb.run((err?: Error, stats?) => {
-                console.log(green("finish compiling..."));
+                bar.stop();
+                this.log(green("finish compiling..."));
                 if (err) return reject(err);
                 if (stats?.hasErrors()) return reject(stats?.compilation.errors);
                 if (stats?.hasWarnings()) {
-                    console.log(yellow(stats?.compilation.warnings.toString()));
+                    this.log(yellow(stats?.compilation.warnings.toString()));
                 }
                 return resolve(stats);
             });
@@ -51,9 +69,9 @@ export default class PluginBuilder {
             ...pkg,
             main: config.output.filename
         };
-        console.log(green("start creating plugin package.json..."));
+        this.log(green("start creating plugin package.json..."));
         await fs.writeJSON(path.resolve(config.output.path, "package.json"), pkg, {spaces: "\t"});
-        console.log(green("start packaging..."));
+        this.log(green("start packaging..."));
         tar
             .pack(config.output.path)
             .pipe(fs.createWriteStream(path.resolve(config.output.path, `../${pkg.identifier}@${pkg.version}.sbplugin`)));

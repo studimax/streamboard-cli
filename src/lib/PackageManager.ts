@@ -5,6 +5,15 @@ export default class PackageManager {
     private _hasNpn = false;
     private _hasPnpn = false;
 
+    public install(cwd: string): Promise<unknown> {
+        return new Promise((resolve, reject) => {
+            exec(this.getInstallCommand(), {cwd}, error => {
+                if (error) return reject(error);
+                resolve(null);
+            });
+        });
+    }
+
     private hasYarn(): boolean {
         if (this._hasYarn) return true;
         try {
@@ -44,14 +53,5 @@ export default class PackageManager {
             return "npm install";
         }
         throw new Error("need a package manager like yarn, npm or pnpm");
-    }
-
-    public install(cwd: string): Promise<unknown> {
-        return new Promise((resolve, reject) => {
-            exec(this.getInstallCommand(), {cwd}, error => {
-                if (error) return reject(error);
-                resolve(null);
-            });
-        });
     }
 }

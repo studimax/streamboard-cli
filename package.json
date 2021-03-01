@@ -6,8 +6,9 @@
   "scripts": {
     "build": "tsc",
     "serve": "ts-node ./src/bin/index.ts",
-    "test": "ts-node ./test/test.ts",
-    "lint": "eslint ./src/ --ext .ts"
+    "lint": "eslint ./src/ --ext .ts",
+    "test": "tsc & mocha",
+    "prepare": "tsc"
   },
   "preferGlobal": true,
   "bin": {
@@ -15,6 +16,7 @@
   },
   "dependencies": {
     "ajv": "^7.0.3",
+    "cli-progress": "^3.9.0",
     "colors": "^1.4.0",
     "commander": "^7.0.0",
     "copy-webpack-plugin": "^7.0.0",
@@ -27,21 +29,26 @@
     "webpack": "^5.18.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.15",
+    "@types/cli-progress": "^3.9.0",
     "@types/copy-webpack-plugin": "^6.4.0",
     "@types/download": "^6.2.4",
     "@types/fs-extra": "^9.0.6",
     "@types/inquirer": "^7.3.1",
+    "@types/mocha": "^8.2.1",
     "@types/node": "^14.14.22",
     "@types/rimraf": "^3.0.0",
     "@types/tar": "^4.0.4",
     "@types/tar-fs": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@typescript-eslint/parser": "^4.15.0",
+    "chai": "^4.3.0",
     "eslint": "^7.20.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.3.1",
+    "mocha": "^8.3.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   },

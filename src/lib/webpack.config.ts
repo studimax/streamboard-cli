@@ -1,4 +1,4 @@
-import {Configuration} from "webpack";
+import {Configuration, ProgressPlugin, WebpackPluginInstance} from "webpack";
 import CopyPlugin from "copy-webpack-plugin";
 import path from "path";
 
@@ -10,16 +10,13 @@ export interface CompilerConfig extends Configuration {
     }
 }
 
-export default (src: string, out: string): CompilerConfig => ({
-    context: path.resolve(__dirname),
-    mode: "production",
-    stats: true,
-    entry: path.resolve(src, "./src/index.ts"),
-    output: {
-        path: out,
-        filename: "index.js"
-    },
-    module: {
+export default class Config implements CompilerConfig {
+    public readonly context = path.resolve(__dirname);
+    public readonly mode = "production";
+    public readonly stats = true;
+    public entry: string;
+    public output: { path: string; filename: string };
+    public readonly module = {
         rules: [
             {
                 test: /\.tsx?$/,
@@ -27,26 +24,51 @@ export default (src: string, out: string): CompilerConfig => ({
                 exclude: /node_modules/
             }
         ]
-    },
-    resolve: {
+    };
+    public readonly resolve = {
         extensions: [".tsx", ".ts", ".js"]
-    },
-    optimization: {
+    };
+    public readonly optimization = {
         minimize: true
-    },
-    plugins: [
-        new CopyPlugin({
-            patterns: [
-                {
-                    context: path.resolve(src),
-                    from: "assets/",
-                    to: "assets/",
-                    globOptions: {
-                        gitignore: true
+    };
+    public readonly target = "node";
+    public onprogress?: (percentage: number, msg: string, ...args: string[]) => void;
+    public readonly plugins: WebpackPluginInstance[] = [];
+
+    constructor(src: string, out: string) {
+        this.entry = path.resolve(src, "./src/index.ts");
+        this.output = {
+            path: out,
+            filename: "index.js"
+        };
+        this.plugins.push(
+            new ProgressPlugin((percentage: number, msg: string, ...args: string[]) => this.onprogress?.(percentage, msg, ...args)),
+            new CopyPlugin({
+                patterns: [
+                    {
+                        context: path.resolve(src),
+                        from: "assets/",
+                        to: "assets/",
+                        globOptions: {
+                            gitignore: true
+                        }
                     }
-                }
-            ]
-        })
-    ],
-    target: "node"
-});
+                ]
+            }))
+    }
+
+    public toWebpackConfig(): CompilerConfig {
+        return {
+            context: this.context,
+            mode: this.mode,
+            stats: this.stats,
+            entry: this.entry,
+            output: this.output,
+            module: this.module,
+            optimization: this.optimization,
+            target: this.target,
+            plugins: this.plugins,
+            resolve: this.resolve,
+        }
+    }
+}
