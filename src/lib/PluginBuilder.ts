@@ -1,13 +1,13 @@
 import path from "path";
 import fs from "fs-extra";
 import Ajv from "ajv";
-import tar from "tar-fs";
 import {PluginPackageInterface, PluginPackageSchema} from "./PluginPackageInterface";
 import packageInfo from "../../package.json";
 import {cyan, green, yellow} from "colors/safe";
 import webpack from "webpack";
 import Config, {CompilerConfig} from "./webpack.config";
 import cliProgress from "cli-progress";
+import archiver from "archiver";
 
 export default class PluginBuilder {
     private static readonly packageFolder = "package";
@@ -71,10 +71,15 @@ export default class PluginBuilder {
         };
         this.log(green("start creating plugin package.json..."));
         await fs.writeJSON(path.resolve(config.output.path, "package.json"), pkg, {spaces: "\t"});
-        this.log(green("start packaging..."));
-        tar
-            .pack(config.output.path)
-            .pipe(fs.createWriteStream(path.resolve(config.output.path, `../${pkg.identifier}@${pkg.version}.sbplugin`)));
+        this.log(green("start packing..."));
+        const output = fs.createWriteStream(path.resolve(config.output.path, `../${pkg.identifier}@${pkg.version}.sbplugin`));
+        const archive = archiver("zip", {
+            zlib: {level: 9}
+        });
+        archive.directory(config.output.path, false);
+        archive.pipe(output);
+        await archive.finalize();
+        this.log(green(`plugin size: ${archive.pointer()} bytes`));
     }
 
     private async verifyPlugin(): Promise<PluginPackageInterface> {
