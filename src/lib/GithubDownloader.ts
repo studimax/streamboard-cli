@@ -1,3 +1,4 @@
+// @ts-ignore
 import downloadUrl from "download";
 import {sync as rm} from "rimraf";
 

@@ -12,6 +12,12 @@ export interface PluginPackageInterface {
             icon: string;
         };
     };
+    readonly dependencies: {
+        [key: string]: string
+    };
+    readonly engines: {
+        [key: string]: string
+    };
     main: string;
 }
 
@@ -62,8 +68,26 @@ export const PluginPackageSchema: JSONSchemaType<PluginPackageInterface> = {
             },
             additionalProperties: false,
             required: []
+        },
+        dependencies: {
+            description: "Dependencies are specified with a simple hash of package name to version range. The version range is a string which has one or more space-separated descriptors. Dependencies can also be identified with a tarball or git URL.",
+            type: "object",
+            additionalProperties: {
+                type: "string"
+            },
+            required: []
+        },
+        engines: {
+            type: "object",
+            default: {
+                "node": "14.16.0"
+            },
+            additionalProperties: {
+                type: "string"
+            },
+            required: []
         }
     },
-    required: ["name", "version", "main", "icon", "identifier", "actions"],
+    required: ["name", "version", "main", "icon", "identifier", "actions", "dependencies", "engines"],
     additionalProperties: false
 };

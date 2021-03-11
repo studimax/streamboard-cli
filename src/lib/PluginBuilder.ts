@@ -8,10 +8,13 @@ import webpack from "webpack";
 import Config, {CompilerConfig} from "./webpack.config";
 import cliProgress from "cli-progress";
 import archiver from "archiver";
+import PackageManager from "./PackageManager";
+import rebuild from 'electron-rebuild';
 
 export default class PluginBuilder {
     private static readonly packageFolder = "package";
     public verbose = true;
+    private pkgManager = new PackageManager();
 
     constructor(private readonly srcPath: string, private readonly distPath: string) {
     }
@@ -25,11 +28,34 @@ export default class PluginBuilder {
         );
         this.log(cyan(`Let's make ${yellow(pkg.name)} a perfect packed plugin !`));
         await this.compile(pkg, c);
+        await this.makePackage(pkg, c);
+        await this.install(pkg, c);
         await this.pack(pkg, c);
     }
 
     private log(...data: any[]) {
         if (this.verbose) console.log(...data);
+    }
+
+    private async makePackage(pkg: PluginPackageInterface, config: Config) {
+        this.log(green("start creating plugin package.json..."));
+        return await fs.writeJSON(path.resolve(config.output.path, "package.json"), {
+            ...pkg,
+            main: config.output.filename
+        }, {spaces: "\t"});
+    }
+
+    private async install(pkg: PluginPackageInterface, config: Config) {
+        this.log(green("start installing module..."));
+        await this.pkgManager.install(config.output.path, true);
+        await rebuild({
+            buildPath: config.output.path,
+            electronVersion: "12.0.0",
+            force: true,
+            mode: "parallel",
+            debug: false,
+            arch: "all"
+        });
     }
 
     private compile(pkg: PluginPackageInterface, config: Config): Promise<unknown> {
@@ -54,8 +80,12 @@ export default class PluginBuilder {
             wb.run((err?: Error, stats?) => {
                 bar.stop();
                 this.log(green("finish compiling..."));
-                if (err) return reject(err);
-                if (stats?.hasErrors()) return reject(stats?.compilation.errors);
+                if (err) {
+                    return reject(err)
+                }
+                if (stats?.hasErrors()) {
+                    return reject(stats?.compilation.errors);
+                }
                 if (stats?.hasWarnings()) {
                     this.log(yellow(stats?.compilation.warnings.toString()));
                 }
@@ -65,12 +95,6 @@ export default class PluginBuilder {
     }
 
     private async pack(pkg: PluginPackageInterface, config: CompilerConfig): Promise<void> {
-        pkg = {
-            ...pkg,
-            main: config.output.filename
-        };
-        this.log(green("start creating plugin package.json..."));
-        await fs.writeJSON(path.resolve(config.output.path, "package.json"), pkg, {spaces: "\t"});
         this.log(green("start packing..."));
         const output = fs.createWriteStream(path.resolve(config.output.path, `../${pkg.identifier}@${pkg.version}.sbplugin`));
         const archive = archiver("zip", {

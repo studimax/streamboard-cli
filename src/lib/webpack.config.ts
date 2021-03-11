@@ -1,6 +1,8 @@
 import {Configuration, ProgressPlugin, WebpackPluginInstance} from "webpack";
 import CopyPlugin from "copy-webpack-plugin";
 import path from "path";
+// @ts-ignore
+import nodeExternals from "webpack-node-externals";
 
 export interface CompilerConfig extends Configuration {
     entry: string;
@@ -31,7 +33,7 @@ export default class Config implements CompilerConfig {
     public readonly optimization = {
         minimize: true
     };
-    public readonly target = "node";
+    public readonly target = "electron-main";
     public onprogress?: (percentage: number, msg: string, ...args: string[]) => void;
     public readonly plugins: WebpackPluginInstance[] = [];
 
@@ -69,6 +71,7 @@ export default class Config implements CompilerConfig {
             target: this.target,
             plugins: this.plugins,
             resolve: this.resolve,
+            externals: nodeExternals()
         }
     }
 }

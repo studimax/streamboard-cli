@@ -5,9 +5,9 @@ export default class PackageManager {
     private _hasNpn = false;
     private _hasPnpn = false;
 
-    public install(cwd: string): Promise<unknown> {
+    public install(cwd: string, production = false): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            exec(this.getInstallCommand(), {cwd}, error => {
+            exec(production ? this.getInstallProductionCommand() : this.getInstallCommand(), {cwd}, error => {
                 if (error) return reject(error);
                 resolve(null);
             });
@@ -51,6 +51,17 @@ export default class PackageManager {
             return "pnpm install";
         } else if (this.hasNpm()) {
             return "npm install";
+        }
+        throw new Error("need a package manager like yarn, npm or pnpm");
+    }
+
+    private getInstallProductionCommand(): string {
+        if (this.hasYarn()) {
+            return "yarn install --production";
+        } else if (this.hasPnpm()) {
+            return "pnpm install --production";
+        } else if (this.hasNpm()) {
+            return "npm install production";
         }
         throw new Error("need a package manager like yarn, npm or pnpm");
     }
