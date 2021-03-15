@@ -3,6 +3,7 @@ import CopyPlugin from "copy-webpack-plugin";
 import path from "path";
 // @ts-ignore
 import nodeExternals from "webpack-node-externals";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 
 export interface CompilerConfig extends Configuration {
     entry: string;
@@ -33,7 +34,7 @@ export default class Config implements CompilerConfig {
     public readonly optimization = {
         minimize: true
     };
-    public readonly target = "electron-main";
+    public readonly target = "electron-renderer";
     public onprogress?: (percentage: number, msg: string, ...args: string[]) => void;
     public readonly plugins: WebpackPluginInstance[] = [];
 
@@ -56,7 +57,9 @@ export default class Config implements CompilerConfig {
                         }
                     }
                 ]
-            }))
+            }),
+            new HtmlWebpackPlugin()
+        )
     }
 
     public toWebpackConfig(): CompilerConfig {
