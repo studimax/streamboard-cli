@@ -1,0 +1,4 @@
+build/
+test/
+*.d.ts
+*.js
