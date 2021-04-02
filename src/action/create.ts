@@ -4,10 +4,7 @@ import {cyan, green, red} from 'colors/safe';
 import fs from 'fs-extra';
 import {PluginCreate} from '../lib';
 
-export default async function create(
-  projectName: string,
-  options: {}
-): Promise<void> {
+export default async function create(projectName: string): Promise<void> {
   const cwd = process.cwd();
   const inCurrent = projectName === '.';
   if (

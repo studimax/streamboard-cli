@@ -24,7 +24,7 @@ export default class PluginBuilder {
     private readonly distPath: string
   ) {}
 
-  public async run(): Promise<void> {
+  public async run(pack = true): Promise<string> {
     this.log(cyan(`Run ${packageInfo.name}@${packageInfo.version}`));
     const pkg = await this.verifyPlugin();
     const c = new Config(
@@ -34,8 +34,11 @@ export default class PluginBuilder {
     this.log(cyan(`Let's make ${yellow(pkg.name)} a perfect packed plugin !`));
     await this.compile(pkg, c);
     await this.makePackage(pkg, c);
-    await this.install(pkg, c);
-    await this.pack(pkg, c);
+    if (pack) {
+      await this.install(pkg, c);
+      await this.pack(pkg, c);
+    }
+    return c.output.path;
   }
 
   private log(...data: any[]) {

@@ -64,7 +64,7 @@ export default class Config implements CompilerConfig {
           },
         ],
       }),
-      new HtmlWebpackPlugin()
+      new HtmlWebpackPlugin({title: 'StreamBoard Plugin'})
     );
   }
 

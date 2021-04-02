@@ -13,6 +13,10 @@
     "moduleResolution": "node",
     "types": [
       "node", "mocha"
+    ],
+    "lib": [
+      "esnext",
+      "dom"
     ]
   },
   "exclude": [
