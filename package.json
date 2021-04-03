@@ -4,22 +4,19 @@
   "author": "StudiMax Ent.",
   "description": "StreamBoard CLI is a command-line interface to create and pack plugins for the Stream Board",
   "scripts": {
-    "build": "tsc",
-    "serve": "ts-node ./src/bin/index.ts",
+    "serve": "ts-node src/bin/index.ts",
     "lint": "gts lint",
-    "test": "compile & mocha",
-    "prepare": "yarn.cmd run compile",
+    "prepare": "yarn run compile",
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix **/*.ts",
-    "pretest": "yarn.cmd run compile",
-    "posttest": "yarn.cmd run lint"
+    "test": "nyc mocha"
   },
   "preferGlobal": true,
-  "main": "./src/lib/index.js",
-  "types": "./src/lib/index.d.ts",
+  "main": "src/lib/index.js",
+  "types": "src/lib/index.d.ts",
   "bin": {
-    "streamboard-cli": "./src/bin/index.js"
+    "streamboard-cli": "src/bin/index.js"
   },
   "dependencies": {
     "ajv": "^7.0.3",
@@ -60,6 +57,7 @@
     "eslint-plugin-prettier": "^3.3.1",
     "gts": "^3.1.0",
     "mocha": "^8.3.0",
+    "nyc": "^15.1.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   },

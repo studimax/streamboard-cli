@@ -5,7 +5,6 @@ import {
   PluginPackageInterface,
   PluginPackageSchema,
 } from './PluginPackageInterface';
-import packageInfo from '../../package.json';
 import {cyan, green, yellow} from 'colors/safe';
 import webpack from 'webpack';
 import Config, {CompilerConfig} from './webpack.config';
@@ -25,7 +24,6 @@ export default class PluginBuilder {
   ) {}
 
   public async run(pack = true): Promise<string> {
-    this.log(cyan(`Run ${packageInfo.name}@${packageInfo.version}`));
     const pkg = await this.verifyPlugin();
     const c = new Config(
       this.srcPath,
