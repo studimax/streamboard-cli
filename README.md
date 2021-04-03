@@ -10,18 +10,28 @@
 This project is the **official** plugin builder for the Stream Board project.
 
 # Installation
-
+```bash
+    # with npm
     $ npm install streamboard-cli -g
-Create a new plugin
-
+    # with yarn
+    $ yarn global add streamboard-cli
+```
+# How to use
+### Create a new plugin
+```bash
     $ streamboard-cli create <name> 
     $ cd <name>
-Build your new plugin   
-
+```
+### Build your new plugin
+```bash
     $ streamboard-cli build
-
-You need a valid package.json with this configuration :
-
+```
+### Test your new plugin
+```bash
+    $ streamboard-cli serve
+```
+### You need a valid package.json with this configuration :
+```json
     {
         "name": "plugin-name",
         "version": "1.0.0",
@@ -35,11 +45,11 @@ You need a valid package.json with this configuration :
             }
         },
         "engines": {
-            "node": "14.16.0"
+            "node": ">=14.16.0"
         }
     }
-
-Dont forget to put all your assets files in the assets folder.
+```
+Don't forget to put all your assets files in the assets folder.
 
 #### Done
 

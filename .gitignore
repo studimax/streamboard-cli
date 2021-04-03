@@ -7,6 +7,7 @@ yarn-error.log*
 lerna-debug.log*
 build/Release
 node_modules/
+.nyc_output/
 jspm_packages/
 *.tsbuildinfo
 .npm
