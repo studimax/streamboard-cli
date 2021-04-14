@@ -33,7 +33,7 @@ export default class PluginBuilder {
     await this.compile(pkg, c);
     await this.makePackage(pkg, c);
     if (pack) {
-      await this.install(pkg, c);
+      //await this.install(pkg, c);
       await this.pack(pkg, c);
     }
     return c.output.path;
