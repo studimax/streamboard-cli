@@ -5,6 +5,7 @@ import pkg from '../../package.json';
 import create from '../action/create';
 import build from '../action/build';
 import serve from '../action/serve';
+import updateNotifier from 'update-notifier';
 
 function displayError(...lines: string[]): void {
   console.error();
@@ -31,4 +32,5 @@ program.on('command:*', (commands: string[]) => {
   displayError(`Unknown command ${yellow(commands[0])}.`);
 });
 
+updateNotifier({pkg}).notify();
 program.parse(process.argv);
