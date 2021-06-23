@@ -1,4 +1,8 @@
-# Stream Board CLI
+<p align="center" style="margin: 0">
+  <a href="https://stream-board.app/" target="blank"><img src="https://stream-board.app/logo.svg" width="175" alt="StreamBoard Logo" /></a>
+</p>
+<h1 align="center" style="margin-top: 0">Stream Board CLI</h1>
+
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/studimax/streamboard-cli/CodeQL)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ba0fe6b62c2748babe7b6347f6f02c53)](https://app.codacy.com/gh/studimax/streamboard-cli?utm_source=github.com&utm_medium=referral&utm_content=studimax/streamboard-cli&utm_campaign=Badge_Grade_Settings)
 [![npm](https://img.shields.io/npm/v/streamboard-cli)](https://www.npmjs.com/package/streamboard-cli)
